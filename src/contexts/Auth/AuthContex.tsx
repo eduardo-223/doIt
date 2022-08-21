@@ -31,6 +31,7 @@ interface AuthContexData {
   user: User;
   accessToken: string;
   singIn: (credentials: SingInProps) => Promise<void>;
+  singOut: () => void;
 }
 
 const useAuth = () => {
@@ -64,12 +65,20 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
     setData({ accessToken, user });
   }, []);
 
+  const singOut = useCallback(() => {
+    localStorage.removeItem("@Doit:accessToken");
+    localStorage.removeItem("@Doit:user");
+
+    setData({} as AuthState);
+  }, []);
+
   return (
     <AuthContext.Provider
       value={{
         accessToken: data.accessToken,
         user: data.user,
         singIn,
+        singOut
       }}
     >
       {children}
