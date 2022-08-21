@@ -10,6 +10,9 @@ import { SingUpInfo } from "./SingUpInfo";
 import { SingUpForm } from "./SingUpForm";
 import { GoBackButton } from "./GoBackButton";
 import { api } from "../../services/api";
+import { ModalSuccess } from "../../components/Modal/ModalSuccess";
+import { ModalError } from "../../components/Modal/ModalError";
+import { useDisclosure } from "@chakra-ui/core";
 
 const singUpSchema = yup.object().shape({
   name: yup.string().required("Nome obrigatório"),
@@ -41,17 +44,32 @@ export const SingUp = () => {
     resolver: yupResolver(singUpSchema),
   });
 
+  const {
+    isOpen: isModalSuccessOpen,
+    onOpen: onModalSuccessOpen,
+    onClose: onModalSuccessClose,
+  } = useDisclosure();
+
+  const {
+    isOpen: isModalErrorOpen,
+    onOpen: onModalErrorOpen,
+    onClose: onModalErrorCLose,
+  } = useDisclosure();
+  
   const handleSingUp = ({ name, email, password }: SingUpData) => {
     setLoading(true);
     api
       .post("/register", { name, email, password })
       .then((response) => {
         setLoading(false);
+        onModalSuccessOpen()
       })
       .catch((error) => {
         setLoading(false);
+        onModalErrorOpen()
       });
   };
+
 
   const iswideVersion = useBreakpointValue({
     base: false,
@@ -59,48 +77,53 @@ export const SingUp = () => {
   });
 
   return (
-    <Flex
-      padding={["10px 15px", "10px 15px", "0px", "0px"]}
-      alignItems="center"
-      justifyContent="center"
-      height={["auto", "auto", "100vh", "100vh"]}
-      bgGradient={[
-        "linear(to-b, purple.800 65%, white 35%)",
-        "linear(to-b, purple.800 65%, white 35%)",
-        "linear(to-l, purple.800 65%, white 35%)",
-        "linear(to-l, purple.800 65%, white 35%)",
-      ]}
-      color="white"
-    >
+    <>
+      <ModalSuccess isOpen={isModalSuccessOpen} onClose={onModalSuccessClose} />
+      <ModalError isOpen={isModalErrorOpen} onClose={onModalErrorCLose} />
+
       <Flex
-        w={["100%", "100%", "90%", "65%"]}
+        padding={["10px 15px", "10px 15px", "0px", "0px"]}
+        alignItems="center"
         justifyContent="center"
-        flexDirection={["column", "column", "row", "row"]}
+        height={["auto", "auto", "100vh", "100vh"]}
+        bgGradient={[
+          "linear(to-b, purple.800 65%, white 35%)",
+          "linear(to-b, purple.800 65%, white 35%)",
+          "linear(to-l, purple.800 65%, white 35%)",
+          "linear(to-l, purple.800 65%, white 35%)",
+        ]}
+        color="white"
       >
-        {iswideVersion ? (
-          <>
-            <GoBackButton top="75" left="25" />
-            <SingUpForm
-              errors={errors}
-              handleSingUp={handleSubmit(handleSingUp)}
-              loading={loading}
-              register={register}
-            />
-            <SingUpInfo />
-          </>
-        ) : (
-          <>
-            <GoBackButton top="10" left="75vw" />
-            <SingUpInfo />
-            <SingUpForm
-              errors={errors}
-              handleSingUp={handleSubmit(handleSingUp)}
-              loading={loading}
-              register={register}
-            />
-          </>
-        )}
+        <Flex
+          w={["100%", "100%", "90%", "65%"]}
+          justifyContent="center"
+          flexDirection={["column", "column", "row", "row"]}
+        >
+          {iswideVersion ? (
+            <>
+              <GoBackButton top="75" left="25" />
+              <SingUpForm
+                errors={errors}
+                handleSingUp={handleSubmit(handleSingUp)}
+                loading={loading}
+                register={register}
+              />
+              <SingUpInfo />
+            </>
+          ) : (
+            <>
+              <GoBackButton top="10" left="75vw" />
+              <SingUpInfo />
+              <SingUpForm
+                errors={errors}
+                handleSingUp={handleSubmit(handleSingUp)}
+                loading={loading}
+                register={register}
+              />
+            </>
+          )}
+        </Flex>
       </Flex>
-    </Flex>
+    </>
   );
 };
