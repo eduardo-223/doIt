@@ -11,13 +11,15 @@ import { Input } from "../../components/input";
 interface SingupFormProps {
   handleSingUp: () => void;
   errors: DeepMap<FieldValues, FieldError>;
-  register: UseFormRegister<SingInData>;
+  register: UseFormRegister<SingUpData>;
   loading: boolean;
 }
 
-interface SingInData {
+interface SingUpData {
   email: string;
   password: string;
+  name: string;
+  confirm_password: string;
 }
 
 export const SingUpForm = ({
@@ -30,14 +32,14 @@ export const SingUpForm = ({
     onSubmit={handleSingUp}
     as="form"
     w={["100%", "100%", "45%", "45%"]}
-    padding="30px 15px"
+    padding="40px 25px"
     border="3px solid"
     borderColor="gray.100"
     bg="white"
     color="gray.900"
     mt={["4", "4", "0"]}
   >
-    <Heading size="lg">Bem vindo de voltaI</Heading>
+    <Heading size="lg">Crie sua conta</Heading>
     <VStack mt="6" spacing="5">
       <Input
         placeholder="Digite seu nome"
@@ -77,31 +79,18 @@ export const SingUpForm = ({
         {...register("confirm_password")}
       />
     </VStack>
-    <VStack mt="4" spacing="5">
-      <Button
-        isLoading={loading}
-        bg="purple.800"
-        w="100%"
-        color="white"
-        h="60px"
-        borderRadius="8px"
-        _hover={{ background: "purple.900" }}
-        type="submit"
-      >
-        Entrar
-      </Button>
-      <Text color={"gary.400"}>Ainda não possui uma conta? </Text>
-      <Button
-        isLoading={loading}
-        bg="gray.100"
-        w="100%"
-        color="gray.300"
-        h="60px"
-        borderRadius="8px"
-        _hover={{ background: "gray.200" }}
-      >
-        Cadastrar
-      </Button>
-    </VStack>
+    <Button
+      mt="8"
+      isLoading={loading}
+      bg="purple.800"
+      w="100%"
+      color="white"
+      h="60px"
+      borderRadius="8px"
+      _hover={{ background: "purple.900" }}
+      type="submit"
+    >
+      Finalizar cadastro
+    </Button>
   </Grid>
 );
