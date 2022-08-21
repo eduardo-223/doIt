@@ -6,20 +6,26 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useState } from "react";
 import { useAuth } from "../../contexts/Auth/AuthContex";
-import { LoginInfo } from "./LoginInfo";
-import { LoginForm } from "./LoginForm";
+import { SingUpInfo } from "./SingUpInfo";
+import { SingUpForm } from "./SingUpForm";
 
-const singInSchema = yup.object().shape({
+const singUpSchema = yup.object().shape({
+  name: yup.string().required("Nome obrigatório"),
   email: yup.string().required("Email obrigatório").email("Email inválido"),
   password: yup.string().required("Senha obrigatória"),
+  confirm_password: yup
+    .string()
+    .required("Confirmação de senha obrigatória")
+    .oneOf([yup.ref("password")], "Senhas diferentes"),
 });
 
-interface SingInData {
+interface SingUpData {
   email: string;
   password: string;
+  name: string;
 }
 
-export const Login = () => {
+export const SingUp = () => {
   const { singIn } = useAuth();
 
   const [loading, setLoading] = useState(false);
@@ -28,15 +34,12 @@ export const Login = () => {
     formState: { errors },
     register,
     handleSubmit,
-  } = useForm<SingInData>({
-    resolver: yupResolver(singInSchema),
+  } = useForm<SingUpData>({
+    resolver: yupResolver(singUpSchema),
   });
 
-  const handleSingIn = (data: SingInData) => {
-    setLoading(true);
-    singIn(data)
-      .then((_) => setLoading(false))
-      .catch((err) => setLoading(false));
+  const handleSingUp = (data: SingUpData) => {
+    console.log(data)
   };
 
   return (
@@ -59,13 +62,13 @@ export const Login = () => {
         flexDirection={["column", "column", "row", "row"]}
         alignItems="center"
       >
-        <LoginInfo />
-        <LoginForm
+        <SingUpForm
           errors={errors}
-          handleSingIn={handleSubmit(handleSingIn)}
+          handleSingUp={handleSubmit(handleSingUp)}
           loading={loading}
           register={register}
         />
+        <SingUpInfo />
       </Flex>
     </Flex>
   );
